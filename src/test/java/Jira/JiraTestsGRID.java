@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +32,13 @@ public class JiraTestsGRID {
     String password = "652113"; // "1234"
     String created_issue = "";
     String comment_text = "Some comment for addCommentToIssue via WebDriver+Grid";
+    String currentDate = "";
 
     @BeforeTest
     public void beforeTest(){
+
+        currentDate = getTime();
+
         URL hostURL = null;
         try {
             hostURL = new URL("http://localhost:4444/wd/hub");
@@ -39,7 +46,7 @@ public class JiraTestsGRID {
             e.printStackTrace();
         }
         DesiredCapabilities capability = DesiredCapabilities.chrome();
-        capability.setBrowserName("chrome" );
+        capability.setBrowserName("chrome");
         capability.setPlatform(Platform.LINUX);
 
         driver = new RemoteWebDriver(hostURL, capability);
@@ -69,7 +76,7 @@ public class JiraTestsGRID {
         aTitle1 = driver.getTitle();
         assertEquals(aTitle1, eTitle1);
 
-        makeScreenshot();
+        makeScreenshot("loginSuccessful");
     }
 
     @Test(dependsOnMethods = {"loginSuccessful"})
@@ -99,7 +106,7 @@ public class JiraTestsGRID {
                 .getAttribute("data-issue-key");
         System.out.println(created_issue);
 
-        makeScreenshot();
+        makeScreenshot("createIssueSuccessful");
     }
 
     @Test(dependsOnMethods = {"createIssueSuccessful"})
@@ -110,10 +117,22 @@ public class JiraTestsGRID {
         driver.findElement(By.xpath("//*[@id=\"comment\"]")).sendKeys(comment_text);
         driver.findElement(By.xpath("//*[@id=\"issue-comment-add-submit\"]")).submit();
 
-        makeScreenshot();
+        makeScreenshot("addCommentToIssue");
     }
 
     @Test(dependsOnMethods = {"addCommentToIssue"})
+    public void changeTypeOfIssue(){
+        driver.get("http://soft.it-hillel.com.ua:8080/browse/"+created_issue);
+
+        driver.findElement(By.xpath("//span[@id='type-val']")).click();
+        driver.findElement(By.xpath("//div[@id='issuetype-single-select']")).click();
+        driver.findElement(By.xpath("//li[@id='epic-3']/a")).click();
+        driver.findElement(By.xpath("//button[@type='submit']")).submit();
+
+        makeScreenshot("changeTypeOfIssue");
+    }
+
+    @Test(dependsOnMethods = {"changeTypeOfIssue"})
     public void deleteCreatedIssue(){
         driver.get("http://soft.it-hillel.com.ua:8080/browse/"+created_issue);
 
@@ -121,7 +140,7 @@ public class JiraTestsGRID {
         driver.findElement(By.xpath("//*[@id=\"delete-issue\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"delete-issue-submit\"]")).submit();
 
-        makeScreenshot();
+        makeScreenshot("deleteCreatedIssue");
     }
 
     @AfterTest
@@ -141,6 +160,23 @@ public class JiraTestsGRID {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void makeScreenshot(String name){
+        sleep(1000);
+        File screen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(screen, new File("C://Users/Storm/Desktop/scr/"+currentDate+"/"+name+".png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getTime(){
+        DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss (dd.MM.yyyy)");
+        Date date = new Date();
+        String now = dateFormat.format(date);
+        return now;
     }
 
     public void sleep(int time){
