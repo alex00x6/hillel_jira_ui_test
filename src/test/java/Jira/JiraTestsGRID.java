@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -29,7 +30,7 @@ public class JiraTestsGRID {
     String summary = "Some summary for createIssue via WebDriver";
     String issueType = "Bug";
     String login = "alex00x6"; //"a.a.piluck2"
-    String password = "652113"; // "1234"
+    String password = "000000"; // "1234"
     String created_issue = "";
     String comment_text = "Some comment for addCommentToIssue via WebDriver+Grid";
     String currentDate = "";
@@ -105,6 +106,8 @@ public class JiraTestsGRID {
                 .findElement(By.xpath("//*[@id=\"aui-flag-container\"]/div/div/a"))
                 .getAttribute("data-issue-key");
         System.out.println(created_issue);
+
+        Assert.assertNotNull(created_issue);
 
         makeScreenshot("createIssueSuccessful");
     }
