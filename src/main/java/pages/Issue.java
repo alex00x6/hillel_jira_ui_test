@@ -49,7 +49,7 @@ public class Issue {
 
     public void changeReporter(String reporter){
         driver.findElement(By.xpath(".//*[@id='reporter-val']")).click();
-        driver.findElement(By.xpath(".//*[@id='reporter-field']")).sendKeys(reporter, Keys.ALT+"S");
+        driver.findElement(By.xpath(".//*[@id='reporter-field']")).sendKeys(reporter, Keys.ENTER);
     }
 
     public void changePriority(String priority){

@@ -39,14 +39,14 @@ public class JiraTestsGRID {
     String created_issue = "";
     String comment_text = "Some comment for addCommentToIssue via WebDriver+Grid";
     String currentDate = "";
-    String reporter = "katherinebilous";
+    String reporter = "a.a.piluck";
     String priority = "High";
     String summary_new = "Updated summary, blah blah blah";
 
     @BeforeTest
     public void beforeTest(){
-        configForChrome();
-        //configForGrid();
+        //configForChrome();
+        configForGrid();
     }
 
 
