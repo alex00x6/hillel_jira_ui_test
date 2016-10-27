@@ -21,7 +21,7 @@ public class JiraTests {
     String summary = "Some summary for createIssue via Webdriver";
     String issueType = "Bug";
     String login = "alex00x6"; //"a.a.piluck2"
-    String password = "652113"; // "1234"
+    String password = "000000"; // "1234"
     String created_issue = "";
 
     @BeforeTest
