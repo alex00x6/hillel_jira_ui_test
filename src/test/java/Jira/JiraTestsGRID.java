@@ -47,19 +47,20 @@ public class JiraTestsGRID {
     public void beforeTest(){
         configForChrome();
         //configForGrid();
+
+        // разворачивает окно браузера
+        driver.manage().window().maximize();
     }
 
 
-    @Test
+    @Test//(groups = {"LoginCreate"})
     public void loginSuccessful() {
         LoginPage loginPage = new LoginPage(driver);
 
         String eTitle1 = "System Dashboard - JIRA";
         String eTitle = "Log in - JIRA";
 
-        // разворачивает окно браузера
-        driver.manage().window().maximize();
-
+        //открываем страницу логина. ну в целом логично
         loginPage.openPage();
 
         // получить значение у тайтла страницы
@@ -78,7 +79,7 @@ public class JiraTestsGRID {
         helpers.makeScreenshot("loginSuccessful", driver, currentDate);
     }
 
-    @Test(dependsOnMethods = {"loginSuccessful"})
+    @Test( dependsOnMethods = {"loginSuccessful"})
     public void createIssueSuccessful(){
 
         Dashboard dashboard = new Dashboard(driver);
@@ -134,8 +135,11 @@ public class JiraTestsGRID {
     public void changeTypeOfIssue(){
         Issue issue = new Issue(driver);
 
+        WebDriverWait wait = new WebDriverWait(driver, 3000);
+
         //открываем страницу нужной issue
         issue.openPage(created_issue);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"type-val\"]")));
         //меняем Type of Issue
         issue.changeType(issueTypeNew);
         //делаем скриншотец
@@ -176,7 +180,7 @@ public class JiraTestsGRID {
     }
 
 
-    @Test(dependsOnMethods = {"changeSummary"})
+    //@Test(dependsOnMethods = {"changeSummary"})
     public void deleteCreatedIssue(){
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
@@ -189,6 +193,8 @@ public class JiraTestsGRID {
 
     @AfterTest
     public void afterTest(){
+        //удаляем чего мы там насоздавали(вынес сюда вызов метода, ибо на мой взгляд так логичнее)
+        deleteCreatedIssue();
         //ждем, чтоб было время посмотреть, а потом:
         //закрываем окно браузера и убиваем процесс драйвера
         //в случае с гридом убивает созданную сессию(и слава богу и так и надо)

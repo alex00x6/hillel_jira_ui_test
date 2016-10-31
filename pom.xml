@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>guru99</groupId>
-  <artifactId>tutorials</artifactId>
+  <groupId>Hillel</groupId>
+  <artifactId>LR-Selenium</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>tutorials</name>
+  <name>LR-Selenium</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -45,9 +45,9 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.45.0</version>
+			<version>3.0.1</version>
 		</dependency>
 		
-		
+
   </dependencies>
 </project>
