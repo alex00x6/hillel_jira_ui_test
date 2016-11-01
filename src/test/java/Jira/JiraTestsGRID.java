@@ -1,6 +1,5 @@
 package Jira;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -128,6 +127,8 @@ public class JiraTestsGRID {
         //меняем Type of Issue
         issue.changeType(issueTypeNew);
 
+
+
         //делаем скриншотец
         helpers.makeScreenshot("changeTypeOfIssue", driver, currentDate);
         driver.quit();
@@ -141,6 +142,9 @@ public class JiraTestsGRID {
         issue.openPage(created_issue);
         //меняем репортЁра :)
         issue.changeReporter(reporter);
+
+
+        
         //делаем скриншотец
         helpers.makeScreenshot("changeReporter", driver, currentDate);
         driver.quit();
@@ -154,6 +158,8 @@ public class JiraTestsGRID {
         issue.openPage(created_issue);
         //меняем приоритет
         issue.changePriority(priority);
+        //проверяем приоритетность
+        helpers.assertTextByXpath(driver, "//*[@id=\"priority-val\"]",priority);
         //делаем скриншотец
         helpers.makeScreenshot("changePriority", driver, currentDate);
         driver.quit();
@@ -169,9 +175,8 @@ public class JiraTestsGRID {
         //меняем summary
         issue.changeSummary(summary_new);
 
-        driver.navigate().refresh();
-        String aIssueTitle = driver.findElement(By.xpath("//*[@id=\"summary-val\"]")).getText();
-        assertTrue(aIssueTitle.contains(summary_new));
+        //обновляем страницу, получаем текст, сверяем текст с тем, который должен быть
+        helpers.assertTextByXpath(driver, "//*[@id=\"summary-val\"]", summary_new);
 
         //делаем скриншотец
         helpers.makeScreenshot("changeSummary", driver, currentDate);
@@ -188,6 +193,8 @@ public class JiraTestsGRID {
         issue.openPage(created_issue);
         //добавляем коммент
         issue.addComment(comment_text);
+        //проверяем комментность коммента
+        helpers.assertTextByXpath(driver, "//*[@id=\"activitymodule\"]/div[2]/div[2]", comment_text);
         //делаем скриншотец
         helpers.makeScreenshot("addCommentToIssue", driver, currentDate);
         driver.quit();
