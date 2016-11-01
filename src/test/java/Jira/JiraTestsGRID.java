@@ -1,17 +1,16 @@
 package Jira;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import pages.CreateIssuePopUp;
 import pages.Dashboard;
 import pages.Issue;
 import pages.LoginPage;
@@ -31,6 +30,9 @@ public class JiraTestsGRID {
 
     protected WebDriver driver;
     Helpers helpers = new Helpers();
+    private static Cookie cookie;
+    String jsession = "";
+
     String summary = "Some summary for createIssue via WebDriver";
     String issueType = "Bug";
     String issueTypeNew = "Epic";
@@ -43,17 +45,18 @@ public class JiraTestsGRID {
     String priority = "High";
     String summary_new = "Updated summary, blah blah blah";
 
-    @BeforeTest
+
+
+    @BeforeTest(groups = {"UpdateIssue"})
     public void beforeTest(){
         configForChrome();
         //configForGrid();
-
-        // разворачивает окно браузера
-        driver.manage().window().maximize();
+        loginSuccessful();
+        createIssueSuccessful();
     }
 
 
-    @Test//(groups = {"LoginCreate"})
+    //@Test(groups = {"LoginCreate"})
     public void loginSuccessful() {
         LoginPage loginPage = new LoginPage(driver);
 
@@ -76,13 +79,19 @@ public class JiraTestsGRID {
 
         assertEquals(aTitle1, eTitle1);
 
+
+        //TODO попытка получить и передать сессию чтоб пилить 1 логин на пачку браузеров
+        cookie = driver.manage().getCookieNamed("JSESSIONID");
+        System.out.println(cookie.toString());
+
         helpers.makeScreenshot("loginSuccessful", driver, currentDate);
     }
 
-    @Test( dependsOnMethods = {"loginSuccessful"})
+    //@Test(groups = {"LoginCreate"}, dependsOnMethods = {"loginSuccessful"})
     public void createIssueSuccessful(){
 
         Dashboard dashboard = new Dashboard(driver);
+        CreateIssuePopUp createIssuePopUp = new CreateIssuePopUp(driver);
 
         //открываем дашборд
         dashboard.openPage();
@@ -90,27 +99,26 @@ public class JiraTestsGRID {
         dashboard.createClick();
 
         //делаем так, чтоб issue точно создалась в проекте QAAUT xD
-        dashboard.createEnterProject("QAAUT");
+        createIssuePopUp.enterProject("QAAUT");
 
-        //ожидаем пока элемент станет visible
-        WebDriverWait wait = new WebDriverWait(driver, 5000);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"issuetype-field\"]")));
+        //ожидаем пока элемент станет visible (когда будет визибл этот, прорисуются и другие(еврейский подход))
+        helpers.waitForVisibilityByXpath(driver, "//*[@id=\"issuetype-field\"]");
 
-        helpers.sleep(900);
+        //helpers.sleep(900);
 
         //корявым способом меняем со Story на Bug
-        dashboard.createEnterType(issueType);
+        createIssuePopUp.enterType(issueType);
 
         //находим поле самери и пишем туда что-то
         helpers.sleep(500);
-        dashboard.createEnterSummary(summary);
+        createIssuePopUp.enterSummary(summary);
 
         //нажимаем на элемент assign to me
-        dashboard.createAssignToMeClick();
+        createIssuePopUp.clickAssignToMe();
         //нажимаем кнопку submit
-        dashboard.createSubmitClick();
+        createIssuePopUp.clickSubmit();
 
-        created_issue = dashboard.getKeyOfCreatedIssue();
+        created_issue = createIssuePopUp.getKeyOfCreatedIssue();
         System.out.println(created_issue);
 
         Assert.assertNotNull(created_issue);
@@ -119,34 +127,21 @@ public class JiraTestsGRID {
         helpers.makeScreenshot("createIssueSuccessful", driver, currentDate);
     }
 
-    @Test(dependsOnMethods = {"createIssueSuccessful"})
-    public void addCommentToIssue(){
-        Issue issue = new Issue(driver);
 
-        //открываем страницу нужной issue
-        issue.openPage(created_issue);
-        //добавляем коммент
-        issue.addComment(comment_text);
-        //делаем скриншотец
-        helpers.makeScreenshot("addCommentToIssue", driver, currentDate);
-    }
-
-    @Test(dependsOnMethods = {"addCommentToIssue"})
+    @Test(groups={"UpdateIssue"})
     public void changeTypeOfIssue(){
         Issue issue = new Issue(driver);
 
-        WebDriverWait wait = new WebDriverWait(driver, 3000);
-
         //открываем страницу нужной issue
         issue.openPage(created_issue);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"type-val\"]")));
+
         //меняем Type of Issue
         issue.changeType(issueTypeNew);
         //делаем скриншотец
         helpers.makeScreenshot("changeTypeOfIssue", driver, currentDate);
     }
 
-    @Test(dependsOnMethods = {"changeTypeOfIssue"})
+    @Test(groups={"UpdateIssue"})
     public void changeReporter(){
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
@@ -157,7 +152,7 @@ public class JiraTestsGRID {
         helpers.makeScreenshot("changeReporter", driver, currentDate);
     }
 
-    @Test(dependsOnMethods = {"changeReporter"})
+    @Test(groups={"UpdateIssue"})
     public void changePriority(){
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
@@ -168,7 +163,7 @@ public class JiraTestsGRID {
         helpers.makeScreenshot("changePriority", driver, currentDate);
     }
 
-    @Test(dependsOnMethods = {"changePriority"})
+    @Test(groups={"UpdateIssue"})
     public void changeSummary(){
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
@@ -177,6 +172,18 @@ public class JiraTestsGRID {
         issue.changeSummary(summary_new);
         //делаем скриншотец
         helpers.makeScreenshot("changeSummary", driver, currentDate);
+    }
+
+
+    @Test(groups={"UpdateIssue"})
+    public void addCommentToIssue(){
+        Issue issue = new Issue(driver);
+        //открываем страницу нужной issue
+        issue.openPage(created_issue);
+        //добавляем коммент
+        issue.addComment(comment_text);
+        //делаем скриншотец
+        helpers.makeScreenshot("addCommentToIssue", driver, currentDate);
     }
 
 
@@ -198,7 +205,7 @@ public class JiraTestsGRID {
         //ждем, чтоб было время посмотреть, а потом:
         //закрываем окно браузера и убиваем процесс драйвера
         //в случае с гридом убивает созданную сессию(и слава богу и так и надо)
-        helpers.sleep(5000);
+        helpers.sleep(15000);
         driver.quit();
     }
 
@@ -218,7 +225,8 @@ public class JiraTestsGRID {
 
         driver = new RemoteWebDriver(hostURL, capability);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-
+        // разворачивает окно браузера
+        driver.manage().window().maximize();
     }
 
     public void configForChrome(){
@@ -227,6 +235,21 @@ public class JiraTestsGRID {
 
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        // разворачивает окно браузера
+        driver.manage().window().maximize();
+    }
+
+    public WebDriver configForSecondChrome(){
+        currentDate = helpers.getTime();
+        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+
+        WebDriver driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        //пихает печенье в окно браузера
+        driver.manage().addCookie(cookie);
+        // разворачивает окно браузера
+        driver.manage().window().maximize();
+        return driver;
     }
 
 

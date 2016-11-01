@@ -1,9 +1,9 @@
 package utils;
 
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,5 +40,15 @@ public class Helpers {
         Date date = new Date();
         String now = dateFormat.format(date);
         return now;
+    }
+
+    public void scrollPageUp(WebDriver driver){
+        JavascriptExecutor jse = (JavascriptExecutor)driver;
+        jse.executeScript("scroll(0, -250);");
+    }
+
+    public void waitForVisibilityByXpath(WebDriver driver, String xpath) {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
     }
 }
