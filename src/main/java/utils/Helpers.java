@@ -56,4 +56,5 @@ public class Helpers {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
     }
+
 }

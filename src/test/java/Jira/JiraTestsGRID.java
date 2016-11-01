@@ -1,5 +1,6 @@
 package Jira;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -31,7 +32,6 @@ public class JiraTestsGRID {
     protected WebDriver driver;
     Helpers helpers = new Helpers();
     private static Cookie cookie;
-    String jsession = "";
 
     String summary = "Some summary for createIssue via WebDriver";
     String issueType = "Bug";
@@ -49,86 +49,76 @@ public class JiraTestsGRID {
 
     @BeforeTest(groups = {"UpdateIssue"})
     public void beforeTest(){
-        configForChrome();
+        currentDate = helpers.getTime();
+        //configForChrome();
         //configForGrid();
 
-        loginSuccessful();
-        createIssueSuccessful();
+        //loginSuccessful();
+        //createIssueSuccessful();
     }
 
 
-    //@Test(groups = {"LoginCreate"})
+    @Test(groups = {"LoginCreate"})
     public void loginSuccessful() {
+        WebDriver driver = configForChrome();
         LoginPage loginPage = new LoginPage(driver);
-
         String eTitle1 = "System Dashboard - JIRA";
         String eTitle = "Log in - JIRA";
-
         //открываем страницу логина. ну в целом логично
         loginPage.openPage();
-
         // получить значение у тайтла страницы
         String aTitle = driver.getTitle();
         // выполняем проверку, попали ли мы на страницу с нужным тайтлом
         assertEquals(aTitle, eTitle);
-
+        //делаем логиномагию
         loginPage.enterLogin(login);
         loginPage.enterPassword(password);
         loginPage.clickSubmit();
-
+        //проверяем уже новый тайтл
         String aTitle1 = driver.getTitle();
-
         assertEquals(aTitle1, eTitle1);
-
-
-        //TODO попытка получить и передать сессию чтоб пилить 1 логин на пачку браузеров
+        //забираем печенье после логина и делаем его доступным для всех
         cookie = driver.manage().getCookieNamed("JSESSIONID");
-        //System.out.println(cookie.toString());
-        jsession = driver.manage().getCookieNamed("JSESSIONID").getValue();
-        //System.out.println(jsession);
-        //TODO только засунуть эту сессию в браузер, блин, не получается.
-
+        //делаемскриншот
         helpers.makeScreenshot("loginSuccessful", driver, currentDate);
+        driver.quit();
     }
 
-    //@Test(groups = {"LoginCreate"}, dependsOnMethods = {"loginSuccessful"})
+    @Test(groups = {"LoginCreate"}, dependsOnMethods = {"loginSuccessful"})
     public void createIssueSuccessful(){
-
+        WebDriver driver = configForCookiedChrome();
         Dashboard dashboard = new Dashboard(driver);
         CreateIssuePopUp createIssuePopUp = new CreateIssuePopUp(driver);
-
         //открываем дашборд
         dashboard.openPage();
         //находим кнопку Create и нажимаем
         dashboard.clickCreate();
-        //делаем так, чтоб issue точно создалась в проекте QAAUT xD
+        //делаем так, чтоб issue точно создалась в проекте QAAUT
         createIssuePopUp.enterProject("QAAUT");
-
         //корявым способом меняем со Story на Bug
         createIssuePopUp.enterType(issueType);
-
         //находим поле самери и пишем туда что-то
         createIssuePopUp.enterSummary(summary);
-
         //нажимаем на элемент assign to me
         createIssuePopUp.clickAssignToMe();
         //нажимаем кнопку submit
         createIssuePopUp.clickSubmit();
-
+        //получаем ключ созданной issue, чтоб потом с ней работать
         created_issue = createIssuePopUp.getKeyOfCreatedIssue();
         System.out.println(created_issue);
-
+        //проверяем что всё отработало, и мы забрали то, что надо
         Assert.assertNotNull(created_issue);
         assertTrue(created_issue.contains("QAAUT-"));
-
+        //делаемскриншот вне зависимости от результата теста...
         helpers.makeScreenshot("createIssueSuccessful", driver, currentDate);
+        driver.quit();
     }
 
 
-    @Test(groups={"UpdateIssue"})
+    @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changeTypeOfIssue(){
 
-        WebDriver driver = configForSecondChrome();
+        WebDriver driver = configForCookiedChrome();
 
         Issue issue = new Issue(driver);
 
@@ -140,11 +130,12 @@ public class JiraTestsGRID {
 
         //делаем скриншотец
         helpers.makeScreenshot("changeTypeOfIssue", driver, currentDate);
+        driver.quit();
     }
 
-    @Test(groups={"UpdateIssue"})
+    @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changeReporter(){
-        WebDriver driver = configForSecondChrome();
+        WebDriver driver = configForCookiedChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -152,11 +143,12 @@ public class JiraTestsGRID {
         issue.changeReporter(reporter);
         //делаем скриншотец
         helpers.makeScreenshot("changeReporter", driver, currentDate);
+        driver.quit();
     }
 
-    @Test(groups={"UpdateIssue"})
+    @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changePriority(){
-        WebDriver driver = configForSecondChrome();
+        WebDriver driver = configForCookiedChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -164,24 +156,33 @@ public class JiraTestsGRID {
         issue.changePriority(priority);
         //делаем скриншотец
         helpers.makeScreenshot("changePriority", driver, currentDate);
+        driver.quit();
+
     }
 
-    @Test(groups={"UpdateIssue"})
+    @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changeSummary(){
-        WebDriver driver = configForSecondChrome();
+        WebDriver driver = configForCookiedChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
         //меняем summary
         issue.changeSummary(summary_new);
+
+        driver.navigate().refresh();
+        String aIssueTitle = driver.findElement(By.xpath("//*[@id=\"summary-val\"]")).getText();
+        assertTrue(aIssueTitle.contains(summary_new));
+
         //делаем скриншотец
         helpers.makeScreenshot("changeSummary", driver, currentDate);
+        driver.quit();
+
     }
 
 
-    @Test(groups={"UpdateIssue"})
+    @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void addCommentToIssue(){
-        WebDriver driver = configForSecondChrome();
+        WebDriver driver = configForCookiedChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -189,11 +190,14 @@ public class JiraTestsGRID {
         issue.addComment(comment_text);
         //делаем скриншотец
         helpers.makeScreenshot("addCommentToIssue", driver, currentDate);
+        driver.quit();
+
     }
 
 
-    //@Test(dependsOnMethods = {"changeSummary"})
+    //@Test
     public void deleteCreatedIssue(){
+        WebDriver driver = configForCookiedChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -201,22 +205,19 @@ public class JiraTestsGRID {
         issue.deleteIssue();
         //делаем скриншотец
         helpers.makeScreenshot("deleteCreatedIssue", driver, currentDate);
+        driver.quit();
     }
 
     @AfterTest
     public void afterTest(){
-        //удаляем чего мы там насоздавали(вынес сюда вызов метода, ибо на мой взгляд так логичнее)
+        //удаляем чего мы там насоздавали(вынес сюда вызов метода, ибо на мой взгляд пока что так логичнее)
         deleteCreatedIssue();
-        //ждем, чтоб было время посмотреть, а потом:
-        //закрываем окно браузера и убиваем процесс драйвера
-        //в случае с гридом убивает созданную сессию(и слава богу и так и надо)
-        helpers.sleep(15000);
-        driver.quit();
     }
 
 
+
     public void configForGrid(){
-        currentDate = helpers.getTime();
+        //currentDate = helpers.getTime();
 
         URL hostURL = null;
         try {
@@ -234,18 +235,20 @@ public class JiraTestsGRID {
         driver.manage().window().maximize();
     }
 
-    public void configForChrome(){
-        currentDate = helpers.getTime();
+    public WebDriver configForChrome(){
+        WebDriver driver = new ChromeDriver();
+        //currentDate = helpers.getTime();
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
-        driver = new ChromeDriver();
+        //driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         // разворачивает окно браузера
         driver.manage().window().maximize();
+        return driver;
     }
 
-    public WebDriver configForSecondChrome(){
-        currentDate = helpers.getTime();
+    public WebDriver configForCookiedChrome(){
+        //currentDate = helpers.getTime();
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
         WebDriver driver = new ChromeDriver();
