@@ -3,33 +3,50 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import utils.Helpers;
 
 /**
  * Created by Storm on 01.11.2016.
  */
 public class CreateIssuePopUp {
     private WebDriver driver;
+    Helpers helpers = new Helpers();
 
     public CreateIssuePopUp(WebDriver driver){
         this.driver = driver;
     }
 
     public void enterProject(String project){
-        driver.findElement(By.xpath("//*[@id=\"project-field\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"project-field\"]")).clear();
-        driver.findElement(By.xpath("//*[@id=\"project-field\"]")).sendKeys(project, Keys.ENTER);
+        String projectFieldXpath = "//*[@id=\"project-field\"]";
+
+        helpers.waitForVisibilityByXpath(driver, projectFieldXpath);
+        helpers.waitForClickableByXpath(driver, projectFieldXpath);
+
+        driver.findElement(By.xpath(projectFieldXpath)).click();
+        driver.findElement(By.xpath(projectFieldXpath)).clear();
+        driver.findElement(By.xpath(projectFieldXpath)).sendKeys(project, Keys.ENTER);
     }
 
     public void enterType(String issueType){
-        driver.findElement(By.xpath("//*[@id=\"issuetype-field\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"issuetype-field\"]")).clear();
-        driver.findElement(By.xpath("//*[@id=\"issuetype-field\"]")).sendKeys(issueType, Keys.ENTER);
+        String issueTypeFieldXpath = "//*[@id=\"issuetype-field\"]";
+
+        helpers.waitForVisibilityByXpath(driver, issueTypeFieldXpath);
+        helpers.waitForClickableByXpath(driver, issueTypeFieldXpath);
+
+        driver.findElement(By.xpath(issueTypeFieldXpath)).click();
+        driver.findElement(By.xpath(issueTypeFieldXpath)).clear();
+        driver.findElement(By.xpath(issueTypeFieldXpath)).sendKeys(issueType, Keys.ENTER);
     }
 
     public void enterSummary(String summary){
-        driver.findElement(By.xpath("//*[@id=\"summary\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"summary\"]")).clear();
-        driver.findElement(By.xpath("//*[@id=\"summary\"]")).sendKeys(summary, Keys.TAB);
+        String summaryXpath = "//*[@id=\"summary\"]";
+
+        helpers.waitForVisibilityByXpath(driver, summaryXpath);
+        helpers.waitForClickableByXpath(driver, summaryXpath);
+
+        driver.findElement(By.xpath(summaryXpath)).click();
+        driver.findElement(By.xpath(summaryXpath)).clear();
+        driver.findElement(By.xpath(summaryXpath)).sendKeys(summary, Keys.TAB);
     }
 
     public void clickAssignToMe(){

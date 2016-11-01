@@ -18,7 +18,7 @@ public class Dashboard {
         driver.get("http://soft.it-hillel.com.ua:8080/secure/Dashboard.jspa");
     }
 
-    public void createClick(){driver.findElement(By.xpath("//*[@id=\"create_link\"]")).click();}
+    public void clickCreate(){driver.findElement(By.xpath("//*[@id=\"create_link\"]")).click();}
 
 
 }

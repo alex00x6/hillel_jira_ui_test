@@ -38,18 +38,10 @@ public class Issue {
         WebElement type = (new WebDriverWait(driver, 10))
                 .until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"type-val\"]")));
         type.click();
+
         driver.findElement(By.xpath("//*[@id=\"issuetype-field\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"issuetype-field\"]")).clear();
         driver.findElement(By.xpath("//*[@id=\"issuetype-field\"]")).sendKeys(issueType, Keys.ALT+"S");
-    }
-
-    public void changeType2(){ //пока лежит тут, не используется, ибо не пашет.
-        driver.findElement(By.xpath("//*[@id=\"type-val\"]")).click();
-        driver.findElement(By.xpath("//span[@id='type-val']")).clear();
-        //driver.findElement(By.xpath("//span[@id='type-val']")).click();
-        driver.findElement(By.xpath("//div[@id='issuetype-single-select']")).click();
-        driver.findElement(By.xpath("//li[@id='epic-3']/a")).click();//тут проблема, у id окончание постоянно меняется, не знаю как прописать id='epic-*'
-        driver.findElement(By.xpath("//button[@type='submit']")).submit();
     }
 
     public void deleteIssue(){
@@ -60,7 +52,7 @@ public class Issue {
 
     public void changeReporter(String reporter){
         //скроллим страницу вверх, т.к после создания коммента jira автоматически скроллит страницу к коменту
-        //а поле со сменой репортера по странице не ездит(как и приорити и тип)
+        //а поле со сменой репортера по странице не ездит(как и приорити и т.п.)
         helpers.scrollPageUp(driver);
 
         driver.findElement(By.xpath(".//*[@id='reporter-val']")).click();

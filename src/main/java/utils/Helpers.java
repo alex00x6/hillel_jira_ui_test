@@ -51,4 +51,9 @@ public class Helpers {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
     }
+
+    public void waitForClickableByXpath(WebDriver driver, String xpath) {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+    }
 }

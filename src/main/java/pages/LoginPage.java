@@ -2,10 +2,12 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import utils.Helpers;
 
 public class LoginPage {
 
     private WebDriver driver;
+    Helpers helpers = new Helpers();
 
     public LoginPage(WebDriver driver){
         this.driver = driver;
@@ -16,6 +18,7 @@ public class LoginPage {
     }
 
     public void enterLogin(String login){
+        helpers.waitForVisibilityByXpath(driver, "//input[@id='login-form-username']");
         driver.findElement(By.xpath("//input[@id='login-form-username']")).sendKeys(login);
     }
 

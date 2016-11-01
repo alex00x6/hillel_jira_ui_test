@@ -51,6 +51,7 @@ public class JiraTestsGRID {
     public void beforeTest(){
         configForChrome();
         //configForGrid();
+
         loginSuccessful();
         createIssueSuccessful();
     }
@@ -82,7 +83,10 @@ public class JiraTestsGRID {
 
         //TODO попытка получить и передать сессию чтоб пилить 1 логин на пачку браузеров
         cookie = driver.manage().getCookieNamed("JSESSIONID");
-        System.out.println(cookie.toString());
+        //System.out.println(cookie.toString());
+        jsession = driver.manage().getCookieNamed("JSESSIONID").getValue();
+        //System.out.println(jsession);
+        //TODO только засунуть эту сессию в браузер, блин, не получается.
 
         helpers.makeScreenshot("loginSuccessful", driver, currentDate);
     }
@@ -96,21 +100,14 @@ public class JiraTestsGRID {
         //открываем дашборд
         dashboard.openPage();
         //находим кнопку Create и нажимаем
-        dashboard.createClick();
-
+        dashboard.clickCreate();
         //делаем так, чтоб issue точно создалась в проекте QAAUT xD
         createIssuePopUp.enterProject("QAAUT");
-
-        //ожидаем пока элемент станет visible (когда будет визибл этот, прорисуются и другие(еврейский подход))
-        helpers.waitForVisibilityByXpath(driver, "//*[@id=\"issuetype-field\"]");
-
-        //helpers.sleep(900);
 
         //корявым способом меняем со Story на Bug
         createIssuePopUp.enterType(issueType);
 
         //находим поле самери и пишем туда что-то
-        helpers.sleep(500);
         createIssuePopUp.enterSummary(summary);
 
         //нажимаем на элемент assign to me
@@ -130,6 +127,9 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"})
     public void changeTypeOfIssue(){
+
+        WebDriver driver = configForSecondChrome();
+
         Issue issue = new Issue(driver);
 
         //открываем страницу нужной issue
@@ -137,12 +137,14 @@ public class JiraTestsGRID {
 
         //меняем Type of Issue
         issue.changeType(issueTypeNew);
+
         //делаем скриншотец
         helpers.makeScreenshot("changeTypeOfIssue", driver, currentDate);
     }
 
     @Test(groups={"UpdateIssue"})
     public void changeReporter(){
+        WebDriver driver = configForSecondChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -154,6 +156,7 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"})
     public void changePriority(){
+        WebDriver driver = configForSecondChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -165,6 +168,7 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"})
     public void changeSummary(){
+        WebDriver driver = configForSecondChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -177,6 +181,7 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"})
     public void addCommentToIssue(){
+        WebDriver driver = configForSecondChrome();
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -245,8 +250,13 @@ public class JiraTestsGRID {
 
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+
+        //заходим на какой-то урл, ибо нельзя положить куки в браузер если ты никуда не заходил (втф чтозабред)
+        driver.get("http://soft.it-hillel.com.ua:8080/secure/Dashboard.jspa");
         //пихает печенье в окно браузера
+        driver.manage().deleteAllCookies();
         driver.manage().addCookie(cookie);
+
         // разворачивает окно браузера
         driver.manage().window().maximize();
         return driver;
