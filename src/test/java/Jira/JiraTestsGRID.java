@@ -27,7 +27,6 @@ import static org.testng.Assert.assertTrue;
  */
 public class JiraTestsGRID {
 
-    protected WebDriver driver;
     Helpers helpers = new Helpers();
     private static Cookie cookie;
 
@@ -42,20 +41,25 @@ public class JiraTestsGRID {
     String reporter = "a.a.piluck";
     String priority = "High";
     String summary_new = "Updated summary, blah blah blah";
+    Boolean useGrid;
 
 
 
     @BeforeTest(groups = {"UpdateIssue"})
     public void beforeTest(){
         currentDate = helpers.getTime();
-        //configForChrome();
-        //configForGrid();
+        useGrid =true;
     }
 
 
     @Test(groups = {"LoginCreate"})
     public void loginSuccessful() {
-        WebDriver driver = configForChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForChrome();}
+        else{
+            driver = configForGrid();}
+
         LoginPage loginPage = new LoginPage(driver);
         String newTitle = "System Dashboard - JIRA";
         String title = "Log in - JIRA";
@@ -78,7 +82,12 @@ public class JiraTestsGRID {
 
     @Test(groups = {"LoginCreate"}, dependsOnMethods = {"loginSuccessful"})
     public void createIssueSuccessful(){
-        WebDriver driver = configForCookiedChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
+
         Dashboard dashboard = new Dashboard(driver);
         CreateIssuePopUp createIssuePopUp = new CreateIssuePopUp(driver);
         //открываем дашборд
@@ -109,8 +118,12 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changeTypeOfIssue(){
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
 
-        WebDriver driver = configForCookiedChrome();
 
         Issue issue = new Issue(driver);
 
@@ -129,7 +142,12 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changeReporter(){
-        WebDriver driver = configForCookiedChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
+
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -145,7 +163,12 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changePriority(){
-        WebDriver driver = configForCookiedChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
+
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -161,7 +184,12 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void changeSummary(){
-        WebDriver driver = configForCookiedChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
+
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -180,7 +208,12 @@ public class JiraTestsGRID {
 
     @Test(groups={"UpdateIssue"}, dependsOnGroups = {"LoginCreate"})
     public void addCommentToIssue(){
-        WebDriver driver = configForCookiedChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
+
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -197,7 +230,12 @@ public class JiraTestsGRID {
 
     //@Test
     public void deleteCreatedIssue(){
-        WebDriver driver = configForCookiedChrome();
+        WebDriver driver;
+        if (!useGrid){
+            driver = configForCookiedChrome();}
+        else{
+            driver = configForCookiedGrid();}
+
         Issue issue = new Issue(driver);
         //открываем страницу нужной issue
         issue.openPage(created_issue);
@@ -216,7 +254,7 @@ public class JiraTestsGRID {
 
 
 
-    public void configForGrid(){
+    public WebDriver configForGrid(){
         //currentDate = helpers.getTime();
 
         URL hostURL = null;
@@ -229,10 +267,36 @@ public class JiraTestsGRID {
         capability.setBrowserName("chrome");
         capability.setPlatform(Platform.LINUX);
 
-        driver = new RemoteWebDriver(hostURL, capability);
+        WebDriver driver = new RemoteWebDriver(hostURL, capability);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         // разворачивает окно браузера
         driver.manage().window().maximize();
+        return driver;
+    }
+
+    public WebDriver configForCookiedGrid(){
+        //currentDate = helpers.getTime();
+
+        URL hostURL = null;
+        try {
+            hostURL = new URL("http://localhost:4444/wd/hub");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        DesiredCapabilities capability = DesiredCapabilities.chrome();
+        capability.setBrowserName("chrome");
+        capability.setPlatform(Platform.LINUX);
+
+        WebDriver driver = new RemoteWebDriver(hostURL, capability);
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        //заходим на какой-то урл, ибо нельзя положить куки в браузер если ты никуда не заходил (втф чтозабред)
+        driver.get("http://soft.it-hillel.com.ua:8080/secure/Dashboard.jspa");
+        //пихает печенье в окно браузера
+        driver.manage().deleteAllCookies();
+        driver.manage().addCookie(cookie);
+        // разворачивает окно браузера
+        driver.manage().window().maximize();
+        return driver;
     }
 
     public WebDriver configForChrome(){
