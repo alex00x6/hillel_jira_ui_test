@@ -57,18 +57,18 @@ public class JiraTestsGRID {
     public void loginSuccessful() {
         WebDriver driver = configForChrome();
         LoginPage loginPage = new LoginPage(driver);
-        String eTitle1 = "System Dashboard - JIRA";
-        String eTitle = "Log in - JIRA";
+        String newTitle = "System Dashboard - JIRA";
+        String title = "Log in - JIRA";
         //открываем страницу логина. ну в целом логично
         loginPage.openPage();
         // выполняем проверку, попали ли мы на страницу с нужным тайтлом
-        helpers.assertByTitle(driver, eTitle);
+        helpers.assertByTitle(driver, title);
         //делаем логиномагию
         loginPage.enterLogin(login);
         loginPage.enterPassword(password);
         loginPage.clickSubmit();
         //проверяем уже новый тайтл
-        helpers.assertByTitle(driver, eTitle1);
+        helpers.assertByTitle(driver, newTitle);
         //забираем печенье после логина и делаем его доступным для всех
         cookie = driver.manage().getCookieNamed("JSESSIONID");
         //делаемскриншот
