@@ -255,8 +255,6 @@ public class JiraTestsGRID {
 
 
     public WebDriver configForGrid(){
-        //currentDate = helpers.getTime();
-
         URL hostURL = null;
         try {
             hostURL = new URL("http://localhost:4444/wd/hub");
@@ -275,8 +273,6 @@ public class JiraTestsGRID {
     }
 
     public WebDriver configForCookiedGrid(){
-        //currentDate = helpers.getTime();
-
         URL hostURL = null;
         try {
             hostURL = new URL("http://localhost:4444/wd/hub");
@@ -304,7 +300,6 @@ public class JiraTestsGRID {
         //currentDate = helpers.getTime();
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
-        //driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         // разворачивает окно браузера
         driver.manage().window().maximize();
@@ -312,7 +307,6 @@ public class JiraTestsGRID {
     }
 
     public WebDriver configForCookiedChrome(){
-        //currentDate = helpers.getTime();
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
         WebDriver driver = new ChromeDriver();
