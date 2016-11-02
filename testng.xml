@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suite name="JIRA_UI_Tests" verbose="10" parallel="methods">
-
-	<test name="JiraTestsGRID" group-by-instances="true" verbose="3">
+<suite name="JIRA_UI_Tests" parallel="methods" thread-count="2">
+	<test name="JiraTestsGRID">
     		<classes>
 		    	<class name="Jira.JiraTestsGRID" />
 		    </classes>

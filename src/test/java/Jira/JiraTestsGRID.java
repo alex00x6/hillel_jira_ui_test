@@ -51,9 +51,6 @@ public class JiraTestsGRID {
         currentDate = helpers.getTime();
         //configForChrome();
         //configForGrid();
-
-        //loginSuccessful();
-        //createIssueSuccessful();
     }
 
 
@@ -127,7 +124,7 @@ public class JiraTestsGRID {
         //меняем Type of Issue
         issue.changeType(issueTypeNew);
 
-
+        helpers.assertTextByXpath(driver, "//*[@id=\"type-val\"]", issueTypeNew);
 
         //делаем скриншотец
         helpers.makeScreenshot("changeTypeOfIssue", driver, currentDate);
@@ -143,8 +140,8 @@ public class JiraTestsGRID {
         //меняем репортЁра :)
         issue.changeReporter(reporter);
 
+        //helpers.assertTextByXpath(driver, ".//*[@id='reporter-val']", issueTypeNew);
 
-        
         //делаем скриншотец
         helpers.makeScreenshot("changeReporter", driver, currentDate);
         driver.quit();
@@ -271,7 +268,5 @@ public class JiraTestsGRID {
         driver.manage().window().maximize();
         return driver;
     }
-
-
-
+    
 }

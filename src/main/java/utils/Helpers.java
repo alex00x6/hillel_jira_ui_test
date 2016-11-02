@@ -61,6 +61,7 @@ public class Helpers {
 
     public void assertTextByXpath(WebDriver driver, String XPath, String text){
         driver.navigate().refresh();
+        waitForVisibilityByXpath(driver, XPath);
         String aIssueTitle = driver.findElement(By.xpath(XPath)).getText();
         assertTrue(aIssueTitle.contains(text));
     }
