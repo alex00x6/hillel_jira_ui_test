@@ -34,7 +34,7 @@ public class JiraTestsGRID {
     String issueType = "Bug";
     String issueTypeNew = "Epic";
     String login = "alex00x6"; //"a.a.piluck2"
-    String password = "666999"; // "1234"
+    String password = "000000"; // "1234"
     String created_issue = "";
     String comment_text = "Some comment for addCommentToIssue via WebDriver+Grid";
     String currentDate = "";
