@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Created by Storm on 27.10.2016.
@@ -64,5 +66,10 @@ public class Helpers {
         waitForVisibilityByXpath(driver, XPath);
         String aIssueTitle = driver.findElement(By.xpath(XPath)).getText();
         assertTrue(aIssueTitle.contains(text));
+    }
+
+    public void assertByTitle(WebDriver driver, String title){
+        String currentTitle = driver.getTitle();
+        assertEquals(currentTitle, title);
     }
 }

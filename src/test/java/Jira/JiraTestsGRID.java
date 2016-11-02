@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -62,17 +61,14 @@ public class JiraTestsGRID {
         String eTitle = "Log in - JIRA";
         //открываем страницу логина. ну в целом логично
         loginPage.openPage();
-        // получить значение у тайтла страницы
-        String aTitle = driver.getTitle();
         // выполняем проверку, попали ли мы на страницу с нужным тайтлом
-        assertEquals(aTitle, eTitle);
+        helpers.assertByTitle(driver, eTitle);
         //делаем логиномагию
         loginPage.enterLogin(login);
         loginPage.enterPassword(password);
         loginPage.clickSubmit();
         //проверяем уже новый тайтл
-        String aTitle1 = driver.getTitle();
-        assertEquals(aTitle1, eTitle1);
+        helpers.assertByTitle(driver, eTitle1);
         //забираем печенье после логина и делаем его доступным для всех
         cookie = driver.manage().getCookieNamed("JSESSIONID");
         //делаемскриншот
@@ -268,5 +264,5 @@ public class JiraTestsGRID {
         driver.manage().window().maximize();
         return driver;
     }
-    
+
 }
