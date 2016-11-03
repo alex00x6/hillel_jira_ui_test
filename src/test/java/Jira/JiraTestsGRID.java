@@ -48,10 +48,11 @@ public class JiraTestsGRID {
     @BeforeTest(groups = {"UpdateIssue"})
     public void beforeTest(){
         currentDate = helpers.getTime();
-        useGrid =true;
+        useGrid =false;
     }
 
 
+   // @TestCaseID("TMS-1")
     @Test(groups = {"LoginCreate"})
     public void loginSuccessful() {
         WebDriver driver;
